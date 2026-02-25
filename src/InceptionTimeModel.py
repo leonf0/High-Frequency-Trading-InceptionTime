@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class InceptionBlock(nn.Module):
-    def __init__(self, in_channels=40, out_channels=32, bottleneck_channels=32, kernels=(9, 19, 39)):
+    def __init__(self, in_channels=40, out_channels=32, bottleneck_channels=32, kernels=(3, 7, 15)):
         super().__init__()
 
         self.use_bottleneck = in_channels > 1
