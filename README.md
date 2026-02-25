@@ -23,27 +23,29 @@ We use a structure  that wraps three InceptionBlocks inside a residual skip conn
 
 ## InceptionBlock
 
-#### Bottleneck 
+#### Bottleneck 
 
-We use a 1D CNN with a kernel size of 1 that compresses the channel dimension before we move to the expensive multi-scale convolutions. Borrowed from Inception-v2 / ResNet bottleneck design — reduces compute cost while mixing cross-channel information. Skipped only if in_channels == 1 (never triggered here).
+We use a 1D CNN with a kernel size of 1 that compresses the channel dimension before we move to the expensive multi-scale convolutions. This reduces compute cost and mixes the cross-channel information.
 
-3. Three parallel Conv1d branches (k=3, k=7, k=11)
-Each branch processes the bottleneck output with a different kernel size, capturing temporal dependencies at different scales. k=3 picks up very local micro-structure dynamics; k=7 and k=11 capture progressively longer-range patterns (order book evolution over more timesteps). Padding is set to k//2 to preserve the temporal dimension.
-4. AvgPool1d + Conv1d branch (the "pooling path")
-An AvgPool1d(k=3, stride=1) followed by a Conv1d(k=1) applied directly to the pre-bottleneck input (not the bottleneck output). This is the standard Inception pooling branch — it captures smoothed, local temporal aggregations and acts as a mild regulariser.
-5. Concatenate → 4 × 32 = 128 channels
-The four branch outputs are concatenated along the channel axis. The resulting tensor has 128 channels and the same temporal length (sequence dimension is preserved throughout).
-6. BatchNorm1d → ReLU → Dropout(p=0.25)
-Standard post-activation normalisation. Dropout at 0.25 regularises within each block.
+#### Three parallel Conv1d branches
 
-Global Average Pooling — (batch, 128, 100) → (batch, 128)
-AdaptiveAvgPool1d(1) averages across the entire temporal axis, collapsing the 100-timestep dimension to a single vector per sample. This is a key design choice: the model learns a temporal summary of the LOB dynamics rather than just the final snapshot.
+We use 3 parallel 1-D CNN branches to process the bottleneck output each branch with a different kernel size, to capture temporal dependencies at different scales. The first kernel size we use is 3 to pick up on local micro-structure patterns, and then the other branches use kernels of sizes 7 and 11 to pick up progressively longer patterns. We set padding to k//2 where k is the kernel size.
 
-Classification Head
+#### Average Pooling and 1D-CNN branch 
 
-Dropout(p=0.35) — slightly heavier dropout before the final linear layer for additional regularisation.
-Linear(128 → 3) — projects to three logits corresponding to the three LOB mid-price movement classes: Down / Stationary / Up.
+We use an average pooling layer with kernel size 3 and stride length 1, followed by a 1D CNN (with kernel size 1) which is applied directly to the pre-bottleneck input. This captures smoothed, local temporal aggregations and can act as a mild regulariser.
 
+#### Concatenate
+We then concatenate the outputs of the four branch along the channel axis. The resulting tensor has 128 channels and the same temporal length (100).
+
+#### Batch Normalisation → ReLU → Dropout(p=0.25)
+We then use batch normalisation followed by ReLU activation and set dropout at 0.25 in order to regularise and force the model to learn high-signal features. This is applied within each block.
+
+## Global Average Pooling
+We then averages across the entire temporal axis, which collapses the 100-timestep dimension into a single vector per sample so that the model learns a temporal summary of the LOB dynamics.
+
+## Classification Head
+We set a slightly heavier dropout (p=0.35) before the final linear layer, which projects the data to three logits corresponding to the three LOB mid-price movement classes (Down / Stationary / Up).
 
 ## Results Summary
 
