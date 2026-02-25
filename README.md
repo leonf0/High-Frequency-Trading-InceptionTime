@@ -53,6 +53,10 @@ We set a slightly heavier dropout (p=0.35) before the final linear layer, which 
   <img src="assets/classification_report.png" alt="" width="80%"/>
 </p>
 
+The above table shows the models performance, evaluated on a test set of 1 day of data.
+
 <p align="center">
   <img src="assets/confusion_matrix_InceptionTime.png" alt="" width="80%"/>
 </p>
+
+The above figure demonstates the confusion matrix of the models predictions compares to the actual classes.
