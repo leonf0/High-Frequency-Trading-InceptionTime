@@ -8,4 +8,6 @@ In this project we adapt the **"InceptionTime"** CNN architecture and apply it t
 
 The main architectural changes we make are adding dropout layers after every inception block and at the head, which helps regularize and prevent overfitting considering the noisiness of LOB data and the relatively small dataset (362,401 rows of training data across 9 days), and reducing the number of inception blocks from 5 to 3 which improves the models ability to generalise given the dataset size and the signal to noise ratio of LOB data, consistent with the generalisation literature on deep networks in small-data regimes. This architectural change also allows training to run significantly faster.
 
+## Model Architecture
+
 ## Results Summary
