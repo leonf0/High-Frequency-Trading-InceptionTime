@@ -10,4 +10,17 @@ The main architectural changes we make are adding dropout layers after every inc
 
 ## Model Architecture
 
+<p align="center">
+  <img src="assets/inceptiontime_lob_architecture.png" alt="" width="80%"/>
+</p>
+
+
 ## Results Summary
+
+<p align="center">
+  <img src="assets/classification_report.png" alt="" width="80%"/>
+</p>
+
+<p align="center">
+  <img src="assets/confusion_matrix_InceptionTime.png" alt="" width="80%"/>
+</p>
