@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class InceptionBlock(nn.Module):
     def __init__(self, in_channels=40, out_channels=32, bottleneck_channels=32, kernels=(9, 19, 39)):
         super().__init__()
