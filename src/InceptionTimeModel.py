@@ -39,7 +39,7 @@ class InceptionBlock(nn.Module):
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_channels=40, out_channels=32, bottleneck_channels=32, kernels=(5, 11, 21)):
+    def __init__(self, in_channels=40, out_channels=32, bottleneck_channels=32, kernels=(3, 7, 15)):
         super().__init__()
         n_filters = out_channels * (len(kernels) + 1)
 
