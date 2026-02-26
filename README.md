@@ -59,7 +59,7 @@ We set a slightly heavier dropout (p=0.35) before the final linear layer, which 
   <img src="assets/classification_report.png" alt="" width="80%"/>
 </p>
 
-The above table shows the models performance, evaluated on a test set of 1 day of data. The model shows strong predictive strength achieving a macro-F1 score of 0.7013, which outperforms a baseline Ridge Regression model trained and tested on the same datatset (0.33 macro-F1).
+The above table shows the models performance, evaluated on a test set of 1 day of data. The model shows strong predictive strength achieving a macro-F1 score of 0.7013, which outperforms a baseline Ridge Regression model trained and tested on the same datatset (0.44 macro-F1).
 
 <p align="center">
   <img src="assets/confusion_matrix_InceptionTime.png" alt="" width="80%"/>
