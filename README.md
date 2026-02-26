@@ -4,9 +4,11 @@ A 3-class classification task that uses a variant of the **"InceptionTime"** Con
 
 # Project Overview
 
-In this project we adapt the **"InceptionTime"** CNN architecture and apply it to the task of directional classification in a high frequency trading environment, using the FI-2010 dataset. The **"InceptionTime"** architecture was proposed in the 2019 paper “InceptionTime: Finding AlexNet for Time Series Classification.”. The architecture applies convolutions at several receptive field sizes simultaneously to look for short, medium, and long term patterns in a time series. Unlike many traditional time-series methods this allows it to identify multiple temporal structures that a single-scale window would miss.
+In this project we adapt the **"InceptionTime"** CNN architecture and apply it to the task of directional classification in a high frequency trading environment, using the FI-2010 dataset where we have 40 raw LOB features per snapshot and a target label of the directional movement after 10 events. 
 
-The main architectural changes we make are adding dropout layers after every inception block and at the head, which helps regularize and prevent overfitting considering the noisiness of LOB data and the relatively small dataset (362,401 rows of training data across 9 days).
+The **"InceptionTime"** architecture was proposed in the 2019 paper “InceptionTime: Finding AlexNet for Time Series Classification.”. The architecture applies convolutions at several receptive field sizes simultaneously to look for short, medium, and long term patterns in a time series. Unlike many traditional time-series methods this allows it to identify multiple temporal structures that a single-scale window would miss.
+
+The main architectural changes we make are adding dropout layers after every inception block and at the head, which helps regularize and prevent overfitting considering the noisiness of LOB data and the relatively small dataset (362,401 rows of training data across 9 days). In the inception blocks we use a dropout of 0.25, and on the classification head we use a dropout of 0.35. We use an initial learning rate of 0.001, with a scheluder that halves the learning rate that halves the learning rate after 3 training epochs without improvement. Additionally we use 3 kernels of sizes 3, 7 and 11. All these hyperparameter choices were determined using grid-search. We also use the Adaptive Moment Estimator optimizer for training the model.
 
 # Model Architecture
 
@@ -59,4 +61,14 @@ The above table shows the models performance, evaluated on a test set of 1 day o
   <img src="assets/confusion_matrix_InceptionTime.png" alt="" width="80%"/>
 </p>
 
-The above figure demonstates the confusion matrix of the models predictions compares to the actual classes.
+The above figure demonstates the confusion matrix of the models predictions compares to the actual classes. One particular trait of the model that this shows is the fact that the error structure is economically sensible. The majority of errors are confusion between movement and stationary classification, not directional flips:
+
+Down misclassified as Stationary: 2985
+Up misclassified as Stationary: 2559
+
+Whereas true directional confusion is comparatively rare:
+
+Down misclassified as Up: 1270
+Up misclassified as Down: 1248
+
+This is very important in a trading context, predicting "stationary" when the price moves is a simply missed opportunity on the other hand if the model predicts "Down" when the price goes "Up" it would result in a loss.
