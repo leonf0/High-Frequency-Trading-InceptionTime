@@ -62,7 +62,7 @@ class ResidualBlock(nn.Module):
 
 class InceptionTime(nn.Module):
     def __init__(self, in_channels=40, n_classes=3, n_blocks=2, out_channels=32,
-                 bottleneck_channels=32, kernels=(9, 19, 39)):
+                 bottleneck_channels=32, kernels=(3, 7, 15)):
         super().__init__()
         n_filters = out_channels * (len(kernels) + 1)
 
