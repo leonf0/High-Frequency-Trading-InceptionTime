@@ -8,7 +8,11 @@ In this project we adapt the **"InceptionTime"** CNN architecture and apply it t
 
 The **"InceptionTime"** architecture was proposed in the 2019 paper “InceptionTime: Finding AlexNet for Time Series Classification.”. The architecture applies convolutions at several receptive field sizes simultaneously to look for short, medium, and long term patterns in a time series. Unlike many traditional time-series methods this allows it to identify multiple temporal structures that a single-scale window would miss.
 
-The main architectural changes we make are adding dropout layers after every inception block and at the head, which helps regularize and prevent overfitting considering the noisiness of LOB data and the relatively small dataset (362,401 rows of training data across 9 days). In the inception blocks we use a dropout of 0.25, and on the classification head we use a dropout of 0.35. We use an initial learning rate of 0.001, with a scheluder that halves the learning rate that halves the learning rate after 3 training epochs without improvement. Additionally we use 3 kernels of sizes 3, 7 and 11. All these hyperparameter choices were determined using grid-search. We also use the Adaptive Moment Estimator optimizer for training the model.
+The main architectural changes we make are adding dropout layers after every inception block and at the head, which helps regularize and prevent overfitting considering the noisiness of LOB data and the relatively small dataset (362,401 rows of training data across 9 days). In the inception blocks we use a dropout of 0.25, and on the classification head we use a dropout of 0.35. 
+
+We use an initial learning rate of 0.001, with a scheluder that halves the learning rate that halves the learning rate after 3 training epochs without improvement. Additionally we use 3 kernels of sizes 3, 7 and 11. All these hyperparameter choices were determined using grid-search on a the validation dataset we split from the training set prior to training. The model has 221,059 total trainable paramaters which are optimized using the Adaptive Moment Estimater (ADAM) optimizer.
+
+
 
 # Model Architecture
 
@@ -55,7 +59,7 @@ We set a slightly heavier dropout (p=0.35) before the final linear layer, which 
   <img src="assets/classification_report.png" alt="" width="80%"/>
 </p>
 
-The above table shows the models performance, evaluated on a test set of 1 day of data.
+The above table shows the models performance, evaluated on a test set of 1 day of data. The model shows strong predictive strength achieving a macro-F1 score of 0.7013, which outperforms a baseline Ridge Regression model trained and tested on the same datatset (0.33 macro-F1).
 
 <p align="center">
   <img src="assets/confusion_matrix_InceptionTime.png" alt="" width="80%"/>
@@ -71,4 +75,4 @@ Whereas true directional confusion is comparatively rare:
 Down misclassified as Up: 1270
 Up misclassified as Down: 1248
 
-This is very important in a trading context, predicting "stationary" when the price moves is a simply missed opportunity on the other hand if the model predicts "Down" when the price goes "Up" it would result in a loss.
+This is very important in a trading context, predicting "stationary" when the price moves is a simply missed opportunity on the other hand if the model predicts "Down" when the price goes "Up" it would result in a loss. Such a error profile on the model reinforces the models predictive strength and viablity in a high-frequency trading context, and indicates that a potential threshold filter on the stationary class confidence could potentially be applied to improve signal precision.
